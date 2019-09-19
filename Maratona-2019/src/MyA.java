@@ -1,11 +1,9 @@
-package test1;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-public class Test1
+public class MyA
 {
     public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     
@@ -36,7 +34,7 @@ public class Test1
         for (int i = 0; !detecta && i < sensores.length; i++)
         {
             detecta = estaDentroDaCircunferencia(
-                    x, y, sensores[i][0], sensores[i][1], sensores[i][2]);
+                    x, y, sensores[i][1], sensores[i][0], sensores[i][2]);
         }
         
         return detecta;
@@ -59,13 +57,21 @@ public class Test1
                 }
             }
         }
+        
+        for (int[] sensor : sensores) matriz[sensor[0]][sensor[1]] = 9;
     }
     
     public static void printarMatriz(int[][] matriz)
     {
+    	int[] l = new int[matriz[0].length];
+    	
+    	for (int i = 0; i < l.length; i++) l[i] = i;
+    	println("  " + Arrays.toString(l));
+    	int i = 0;
+    	
         for (int[] linha : matriz)
         {
-            println(Arrays.toString(linha));
+            println((i++ % 10) + " " + Arrays.toString(linha));
         }
     }
     
@@ -75,19 +81,19 @@ public class Test1
     public static void main(String[] args)
     {
         String[] fields = readLine().split(" ");
-        int numLinhas = Integer.parseInt(fields[0]) + 1;
-        int numColunas = Integer.parseInt(fields[1]) + 1;
+        int numColunas = Integer.parseInt(fields[0]) + 1;
+        int numLinhas = Integer.parseInt(fields[1]) + 1;
         int numSensores = Integer.parseInt(fields[2]);
         int[][] sensores = new int[numSensores][3];
         
         for (int i = 0; i < numSensores; i++)
         {
             String[] sensor = readLine().split(" ");
-            int linhaSensor = Integer.parseInt(sensor[0]);
-            int colunaSensor = Integer.parseInt(sensor[1]);
+            int colunaSensor = Integer.parseInt(sensor[0]);
+            int linhaSensor = Integer.parseInt(sensor[1]);
             int sensibilidade = Integer.parseInt(sensor[2]);
-            sensores[i][0] = linhaSensor;
-            sensores[i][1] = colunaSensor;
+            sensores[i][0] = colunaSensor;
+            sensores[i][1] = linhaSensor;
             sensores[i][2] = sensibilidade;
         }
         
