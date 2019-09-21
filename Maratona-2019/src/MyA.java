@@ -24,17 +24,17 @@ public class MyA
         int deltaX = circX - x;
         int deltaY = circY - y;
         
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= circRaio;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY) < circRaio;
     }
     
-    public static boolean algumSensorDetecta(int x, int y, int[][] sensores)
+    public static boolean algumSensorDetecta(int linha, int coluna, int[][] sensores)
     {
         boolean detecta = false;
         
         for (int i = 0; !detecta && i < sensores.length; i++)
         {
             detecta = estaDentroDaCircunferencia(
-                    x, y, sensores[i][1], sensores[i][0], sensores[i][2]);
+                    linha, coluna, sensores[i][1], sensores[i][0], sensores[i][2]);
         }
         
         return detecta;
@@ -58,7 +58,7 @@ public class MyA
             }
         }
         
-        for (int[] sensor : sensores) matriz[sensor[0]][sensor[1]] = 9;
+        for (int[] sensor : sensores) matriz[sensor[1]][sensor[0]] = 9;
     }
     
     public static void printarMatriz(int[][] matriz)
@@ -66,12 +66,15 @@ public class MyA
     	int[] l = new int[matriz[0].length];
     	
     	for (int i = 0; i < l.length; i++) l[i] = i;
-    	println("  " + Arrays.toString(l));
+    	println("   " + Arrays.toString(l));
     	int i = 0;
+    	String coluna;
     	
         for (int[] linha : matriz)
         {
-            println((i++ % 10) + " " + Arrays.toString(linha));
+        	coluna = (i < 10) ? i + " " : i + "";
+            println(coluna + " " + Arrays.toString(linha));
+            i++;
         }
     }
     
@@ -101,5 +104,32 @@ public class MyA
         gerarMatrizDeDeteccoes(matriz, numLinhas, numColunas, sensores);
         
         printarMatriz(matriz);
+        
+        String str1 = "####################";
+        String str2 = "@@@@@@@@@@@@@@@@@@@@";
+        boolean alternar = false;
+        
+        print(str1);
+        
+        for (int i = 0; true; i++)
+        {
+        	i = i % str1.length();
+        	
+        	if (i % str1.length() == 0)
+        	{
+        		alternar = !alternar;
+        		for (int j = 0; j < str1.length(); j++) print("\b");
+        	}
+        	
+        	try {
+				Thread.sleep(50);
+				
+				if (alternar) print(str2.charAt(i));
+				else print(str1.charAt(i));
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        }
     }
 }
