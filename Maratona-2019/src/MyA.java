@@ -61,8 +61,16 @@ public class MyA
         for (int[] sensor : sensores) matriz[sensor[1]][sensor[0]] = 9;
     }
     
-    public static void printarMatriz(int[][] matriz)
+    public static void printarMatriz(int[][] matriz, int colunaEspecial, int linhaEspecial)
     {
+    	int copia = -1;
+    	
+    	if (colunaEspecial > 0 && linhaEspecial > 0)
+    	{
+        	copia = matriz[linhaEspecial][colunaEspecial];
+        	matriz[linhaEspecial][colunaEspecial] = 'X';
+    	}
+    	
     	int[] l = new int[matriz[0].length];
     	
     	for (int i = 0; i < l.length; i++) l[i] = i;
@@ -75,6 +83,83 @@ public class MyA
         	coluna = (i < 10) ? i + " " : i + "";
             println(coluna + " " + Arrays.toString(linha));
             i++;
+        }
+
+    	if (colunaEspecial > 0 && linhaEspecial > 0)
+    	{
+            matriz[linhaEspecial][colunaEspecial] = copia;
+    	}
+    }
+    
+    public static int[][] gerarMovimentos(int coluna, int linha)
+    {
+    	return new int[][] {
+    		{coluna, linha - 1},
+    		{coluna, linha + 1},
+    		{coluna - 1, linha},
+    		{coluna + 1, linha},
+    		{coluna - 1, linha - 1},
+    		{coluna + 1, linha + 1},
+    		{coluna - 1, linha + 1},
+    		{coluna + 1, linha - 1},
+    	};
+    }
+
+    public static boolean ePossivelRoubar(int[][] matriz, int coluna, int linha, int numLinhas, int numColunas)
+    {
+    	boolean ePossivel = linha == matriz.length - 1 && coluna == matriz[0].length - 1;
+    	
+    	if (!ePossivel)
+    	{
+    		int[][] movimentos = gerarMovimentos(coluna, linha);
+    		matriz[linha][coluna] = 0; // Marca a posição como detectável
+    		
+    		for (int i = 0; !ePossivel && i < movimentos.length; i++)
+    		{
+    			if (matriz[movimentos[i][1]][movimentos[i][0]] != 0 &&
+        			movimentos[i][0] < numColunas && movimentos[i][1] < numLinhas &&
+					movimentos[i][0] > 0 && movimentos[i][1] > 0)
+    			{
+    	    		println("###############################");
+    	    		printarMatriz(matriz, movimentos[i][0], movimentos[i][1]);
+    				ePossivel = ePossivelRoubar(matriz, movimentos[i][0], movimentos[i][1], numLinhas, numColunas);
+    			}
+    		}
+    	}
+    	
+    	return ePossivel;
+    }
+    
+    public static boolean ePossivelRoubar(int[][] matriz, int numLinhas, int numColunas)
+    {
+    	return ePossivelRoubar(matriz, 0, 0, numLinhas, numColunas);
+    }
+    
+    public static void animar()
+    {
+        String str1 = "####################";
+        String str2 = "@@@@@@@@@@@@@@@@@@@@";
+        boolean alternar = false;
+        
+        print(str1);
+        
+        for (int i = 0; true; i = (i + 1) % str1.length())
+        {
+        	if (i == 0)
+        	{
+        		alternar = !alternar;
+        		for (int j = 0; j < str1.length(); j++) print("\b");
+        	}
+        	
+        	try {
+				Thread.sleep(50);
+				
+				if (alternar) print(str2.charAt(i));
+				else print(str1.charAt(i));
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
     }
     
@@ -103,33 +188,9 @@ public class MyA
         int[][] matriz = new int[numLinhas][numColunas];
         gerarMatrizDeDeteccoes(matriz, numLinhas, numColunas, sensores);
         
-        printarMatriz(matriz);
+        printarMatriz(matriz, -1, -1);
         
-        String str1 = "####################";
-        String str2 = "@@@@@@@@@@@@@@@@@@@@";
-        boolean alternar = false;
-        
-        print(str1);
-        
-        for (int i = 0; true; i++)
-        {
-        	i = i % str1.length();
-        	
-        	if (i % str1.length() == 0)
-        	{
-        		alternar = !alternar;
-        		for (int j = 0; j < str1.length(); j++) print("\b");
-        	}
-        	
-        	try {
-				Thread.sleep(50);
-				
-				if (alternar) print(str2.charAt(i));
-				else print(str1.charAt(i));
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-        }
+        println(ePossivelRoubar(matriz, numLinhas, numColunas) ? "S" : "N");
+        //animar();
     }
 }
