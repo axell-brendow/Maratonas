@@ -232,9 +232,9 @@ public class A
 				{
 					println(
 						"Options:" +
-						"\n\t-h\t\t--help\t\t\tShows this help message." +
+						"\n\t-h\t\t--help\t\t\tShow this help message." +
 						"\n\t-d <int>\t--delay <int>\t\tSet a delay for each iteration of the algorithm. Default is 50ms." +
-						"\n\t-n\t\t--nodelay\t\tDisables animations.");
+						"\n\t-n\t\t--nodelay\t\tDisable animations.");
 					
 					System.exit(0);
 				}
