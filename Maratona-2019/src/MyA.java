@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 public class MyA
 {
+	public static final int DELAY_PADRAO = 5;
+	public static final String CLEAR = System.getProperty("os.name")
+										.toLowerCase().contains("windows") ? "cls" : "clear";
     public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     
     public static void print(Object msg) { System.out.print(msg); }
@@ -46,15 +49,7 @@ public class MyA
         {
             for (int j = 0; j < numColunas; j++)
             {
-                if (algumSensorDetecta(i, j, sensores))
-                {
-                    matriz[i][j] = 0;
-                }
-                
-                else
-                {
-                    matriz[i][j] = 1;
-                }
+            	matriz[i][j] = algumSensorDetecta(i, j, sensores) ? 0 : 1;
             }
         }
         
@@ -91,6 +86,27 @@ public class MyA
     	}
     }
     
+    public static void sleep(int milliseconds)
+    {
+    	try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public static void exec(String command)
+    {
+    	try
+		{
+			new ProcessBuilder("cmd", "/c", command).inheritIO().start().waitFor();
+		}
+		catch (InterruptedException | IOException e)
+		{
+			e.printStackTrace();
+		}
+    }
+    
     public static int[][] gerarMovimentos(int coluna, int linha)
     {
     	return new int[][] {
@@ -116,12 +132,13 @@ public class MyA
     		
     		for (int i = 0; !ePossivel && i < movimentos.length; i++)
     		{
-    			if (matriz[movimentos[i][1]][movimentos[i][0]] != 0 &&
-        			movimentos[i][0] < numColunas && movimentos[i][1] < numLinhas &&
-					movimentos[i][0] > 0 && movimentos[i][1] > 0)
+    			if (movimentos[i][0] < numColunas && movimentos[i][1] < numLinhas &&
+					movimentos[i][0] > 0 && movimentos[i][1] > 0 &&
+					matriz[movimentos[i][1]][movimentos[i][0]] != 0)
     			{
-    	    		println("###############################");
     	    		printarMatriz(matriz, movimentos[i][0], movimentos[i][1]);
+    	    		sleep(DELAY_PADRAO);
+    	    		exec(CLEAR);
     				ePossivel = ePossivelRoubar(matriz, movimentos[i][0], movimentos[i][1], numLinhas, numColunas);
     			}
     		}
@@ -135,33 +152,28 @@ public class MyA
     	return ePossivelRoubar(matriz, 0, 0, numLinhas, numColunas);
     }
     
-    public static void animar()
-    {
-        String str1 = "####################";
-        String str2 = "@@@@@@@@@@@@@@@@@@@@";
-        boolean alternar = false;
-        
-        print(str1);
-        
-        for (int i = 0; true; i = (i + 1) % str1.length())
-        {
-        	if (i == 0)
-        	{
-        		alternar = !alternar;
-        		for (int j = 0; j < str1.length(); j++) print("\b");
-        	}
-        	
-        	try {
-				Thread.sleep(50);
-				
-				if (alternar) print(str2.charAt(i));
-				else print(str1.charAt(i));
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-        }
-    }
+//    public static void animar()
+//    {
+//        String str1 = "####################";
+//        String str2 = "@@@@@@@@@@@@@@@@@@@@";
+//        boolean alternar = false;
+//        
+//        print(str1);
+//        
+//        for (int i = 0; true; i = (i + 1) % str1.length())
+//        {
+//        	if (i == 0)
+//        	{
+//        		alternar = !alternar;
+//        		for (int j = 0; j < str1.length(); j++) print("\b");
+//        	}
+//        	
+//        	sleep(50);
+//
+//			if (alternar) print(str2.charAt(i));
+//			else print(str1.charAt(i));
+//        }
+//    }
     
     /**
      * @param args the command line arguments
@@ -189,8 +201,12 @@ public class MyA
         gerarMatrizDeDeteccoes(matriz, numLinhas, numColunas, sensores);
         
         printarMatriz(matriz, -1, -1);
+		sleep(DELAY_PADRAO);
+		exec(CLEAR);
         
         println(ePossivelRoubar(matriz, numLinhas, numColunas) ? "S" : "N");
+        exec(CLEAR);
+        printarMatriz(matriz, -1, -1);
         //animar();
     }
 }
